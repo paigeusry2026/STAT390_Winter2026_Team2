@@ -74,19 +74,22 @@ def print_data_summary(train_df: pd.DataFrame, val_df: pd.DataFrame, test_df: pd
     
     print("=" * 50)
 
-
-def create_run_directory(base_dir: str = None) -> str:
-    """Create a unique run directory with timestamp"""
+# updated this for patch order code, to accept run name
+def create_run_directory(base_dir: str = None, run_name: str = None) -> str:
+    """Create a unique run directory with timestamp or custom name"""
     from datetime import datetime
     from config import DATA_PATHS
     
     if base_dir is None:
         base_dir = DATA_PATHS['runs_dir']
     
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    run_dir = os.path.join(base_dir, f"run_{timestamp}")
-    os.makedirs(run_dir, exist_ok=True)
+    if run_name is not None:
+        run_dir = os.path.join(base_dir, run_name)
+    else:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        run_dir = os.path.join(base_dir, f"run_{timestamp}")
     
+    os.makedirs(run_dir, exist_ok=True)
     print(f"Created run directory: {run_dir}")
     return run_dir
 

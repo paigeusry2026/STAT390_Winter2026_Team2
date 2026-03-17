@@ -70,6 +70,9 @@ def parse_args():
                        help='Number of top/bottom patches to visualize')
     parser.add_argument('--load_splits', type=str, default=None,
                        help='Path to data_splits.npz file to load existing splits')
+    # added argument for patch order code
+    parser.add_argument('--run_name', type=str, default=None,
+                   help='Custom name for run directory (e.g. split1_seed42)')
     
     return parser.parse_args()
 
@@ -226,7 +229,9 @@ def main():
     device = get_device()
     
     # Create run directory
-    run_dir = create_run_directory()
+    #run_dir = create_run_directory()
+    # replaced for splits / patch order code
+    run_dir = create_run_directory(run_name=args.run_name)
     
     # Update checkpoint directory to run directory
     args.checkpoint_dir = os.path.join(run_dir, "checkpoints")
@@ -317,8 +322,11 @@ def main():
     results_path = os.path.join(run_dir, "results.txt")
     with open(results_path, 'w') as f:
         f.write(f"Test Results:\n")
+        f.write(f"Seed: {args.seed}\n") # added line for patch order code
+        f.write(f"Split: {args.load_splits}\n") # added line for patch order code
         f.write(f"Test Loss: {test_results['test_loss']:.4f}\n")
         f.write(f"Test Accuracy: {test_results['test_accuracy']:.4f}\n")
+        f.write(f"Best Val Loss: {trainer.best_val_loss:.4f}\n") # added line for patch order code
         f.write(f"Number of samples: {test_results['num_samples']}\n")
         if args.resume:
             f.write(f"Checkpoint used: {args.resume}\n")
